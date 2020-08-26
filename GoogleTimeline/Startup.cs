@@ -1,6 +1,8 @@
 using DataAccess;
+using DataAccess.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +26,26 @@ namespace GoogleTimeline
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/auth/login";
+                options.LogoutPath = "/auth/logout";
+            });
+
             services.AddRazorPages();
+
+            services.AddAuthentication()
+                .AddGoogle(options =>
+            {
+                var googleConfigurationSection = Configuration.GetSection("Google");
+                options.ClientId = googleConfigurationSection["ClientId"];
+                options.ClientSecret = googleConfigurationSection["ClientSecret"];
+                options.CallbackPath = googleConfigurationSection["CallbackPath"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,9 +68,11 @@ namespace GoogleTimeline
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
         }
