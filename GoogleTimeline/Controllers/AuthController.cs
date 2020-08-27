@@ -18,11 +18,6 @@ namespace GoogleTimeline.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Test()
-        {
-            return Ok("Test");
-        }
-
         /// <summary>
         /// Entry point which triggers the start of the external login flow
         /// </summary>
@@ -30,15 +25,24 @@ namespace GoogleTimeline.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action("ProcessLoginCallback", "auth", new { returnUrl });
+            var redirectUrl = Url.Action("callback", "auth", new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
             return new ChallengeResult("Google", properties);
         }
 
         /// <summary>
+        /// Sign out of the application
+        /// </summary>
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Redirect("/");
+        }
+
+        /// <summary>
         /// Handler which is triggered when the auth flow has completed, and the middleware has scaffolded the relevant information
         /// </summary>
-        public async Task<IActionResult> ProcessLoginCallback(string returnUrl = null, string remoteError = null)
+        public async Task<IActionResult> Callback(string returnUrl = null, string remoteError = null)
         {
             if (remoteError != null)
             {
@@ -68,7 +72,7 @@ namespace GoogleTimeline.Controllers
             else
             {
                 // If the user does not have an account, then ask the user to create an account.
-                return Ok("You do not have an account");
+                return RedirectToPage("/Account/Create", new { returnUrl });
             }
         }
     }

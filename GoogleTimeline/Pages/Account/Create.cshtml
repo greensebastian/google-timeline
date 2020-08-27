@@ -1,0 +1,12 @@
+﻿@page
+@model GoogleTimeline.Pages.Account.CreateModel
+@{
+}
+<h2>
+    Create account
+</h2>
+<p>You do not yet have an account for this email. Do you want to create one for @Model.Email?</p>
+<form method="post">
+    <input type="text" name="returnUrl" value="@Model.ReturnUrl" />
+    <button type="submit">Create account</button>
+</form>
