@@ -1,8 +1,8 @@
-﻿using DataAccess.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
+using DataAccess;
 
 namespace GoogleTimeline.Pages.Account
 {

@@ -1,0 +1,16 @@
+﻿@page
+@model GoogleTimeline.Pages.Timeline.IndexModel
+@{
+}
+<h1 class="display-4">Timeline</h1>
+<p>Here you can view your timeline summary, and add more records.</p>
+<table>
+    <tr>
+        <td>Place visits:</td>
+        <td>@Model.PlaceVisitCount</td>
+    </tr>
+    <tr>
+        <td>Activity segments:</td>
+        <td>@Model.ActivitySegmentCount</td>
+    </tr>
+</table>

@@ -1,5 +1,5 @@
 using DataAccess;
-using DataAccess.Models;
+using Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Domain.Interface;
+using GoogleTimelineUI.Services;
 
 namespace GoogleTimeline
 {
@@ -33,6 +35,8 @@ namespace GoogleTimeline
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<UserService>();
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/auth/login";
@@ -49,6 +53,8 @@ namespace GoogleTimeline
                 options.ClientSecret = googleConfigurationSection["ClientSecret"];
                 options.CallbackPath = googleConfigurationSection["CallbackPath"];
             });
+
+            services.AddTransient<ITimelineService, TimelineService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

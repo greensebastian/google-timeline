@@ -1,9 +1,9 @@
-﻿using DataAccess.Models;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
+using DataAccess;
 
 namespace GoogleTimeline.Controllers
 {

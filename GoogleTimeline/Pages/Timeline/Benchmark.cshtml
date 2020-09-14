@@ -1,0 +1,66 @@
+﻿@page
+@model GoogleTimelineUI.Pages.Timeline.BenchmarkModel
+@{
+}
+<h1 class="display-4">Bechmark</h1>
+<p>Here you can test the fetch time of different EF retrieval methods</p>
+<table id="benchmark-table">
+    <tr>
+        <td></td>
+        <th>EF load method:</th>
+        <th>Average</th>
+        <th>All calls</th>
+    </tr>
+    <tr id="predicate">
+        <td><button>Call</button></td>
+        <td>Aggregate predicate:</td>
+        <td>0</td>
+        <td></td>
+    <tr id="id">
+        <td><button>Call</button></td>
+        <td>Aggregate id:</td>
+        <td>0</td>
+        <td></td>
+    </tr>
+    <tr id="include">
+        <td><button>Call</button></td>
+        <td>Include:</td>
+        <td>0</td>
+        <td></td>
+    </tr>
+    <tr id="load">
+        <td><button>Call</button></td>
+        <td>Cascading explicit load:</td>
+        <td>0</td>
+        <td></td>
+    </tr>
+</table>
+
+@section scripts{ 
+<script type="text/javascript">
+    let table = document.getElementById("benchmark-table");
+    let rows = Array.from(table.getElementsByTagName("tr")).filter((row) => row.id)
+
+    rows.forEach(el => {
+        let button = el.children[0].children[0];
+        let average = el.children[2];
+        let all = el.children[3];
+        button.addEventListener("click", (event) => {
+            button.disabled = true;
+            fetch("?handler=Run&type=" + el.id).then((response) => {
+                return response.text();
+            }).then((text) => {
+                let newText = all.innerHTML;
+                if (newText.length != 0) {
+                    newText = newText + ", ";
+                }
+                newText += text;
+                all.innerHTML = newText;
+                let values = newText.split(", ").map((val) => parseInt(val));
+                average.innerHTML = values.reduce((sum, next) => sum + next) / values.length;
+                button.disabled = false;
+            });
+        })
+    });
+</script>
+}

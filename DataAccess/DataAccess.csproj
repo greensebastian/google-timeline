@@ -5,9 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200905094348_TimelineData.cs" />
+    <Compile Remove="Migrations\20200905094348_TimelineData.Designer.cs" />
+    <Compile Remove="Migrations\20200912085038_AddIds.cs" />
+    <Compile Remove="Migrations\20200912085038_AddIds.Designer.cs" />
+    <Compile Remove="Migrations\20200912085927_AddIds.cs" />
+    <Compile Remove="Migrations\20200912085927_AddIds.Designer.cs" />
+    <Compile Remove="Migrations\20200912090039_AddIds.cs" />
+    <Compile Remove="Migrations\20200912090039_AddIds.Designer.cs" />
+    <Compile Remove="Migrations\20200912092023_AddIds.cs" />
+    <Compile Remove="Migrations\20200912092023_AddIds.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 
 </Project>
