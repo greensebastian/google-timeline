@@ -48,6 +48,10 @@
         button.addEventListener("click", (event) => {
             button.disabled = true;
             fetch("?handler=Run&type=" + el.id).then((response) => {
+                let status = parseInt(response.status);
+                if (status < 200 || status > 299) {
+                    throw "Server response did not indicate success: " + status;
+                }
                 return response.text();
             }).then((text) => {
                 let newText = all.innerHTML;
@@ -59,6 +63,8 @@
                 let values = newText.split(", ").map((val) => parseInt(val));
                 average.innerHTML = values.reduce((sum, next) => sum + next) / values.length;
                 button.disabled = false;
+            }).catch((error) => {
+                alert(error);
             });
         })
     });

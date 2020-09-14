@@ -4,6 +4,10 @@
 }
 <h1 class="display-4">Timeline</h1>
 <p>Here you can view your timeline summary, and add more records.</p>
+@if (!string.IsNullOrWhiteSpace(Model.PeriodString)) 
+{
+    <p>The data available is for the following periods: @Model.PeriodString</p>
+}
 <table>
     <tr>
         <td>Place visits:</td>

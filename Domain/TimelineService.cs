@@ -10,16 +10,19 @@ using System.Linq.Expressions;
 using System.Diagnostics;
 using Common;
 using System.ComponentModel;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Domain
 {
     public class TimelineService : ITimelineService
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IMemoryCache _memoryCache;
 
-        public TimelineService(ApplicationDbContext applicationDbContext)
+        public TimelineService(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache)
         {
             _applicationDbContext = applicationDbContext;
+            _memoryCache = memoryCache;
         }
 
         public void AddTimelineData(User user, IEnumerable<SemanticTimeline> semantictimelines)
@@ -31,11 +34,13 @@ namespace Domain
 
             var newPlaceVisits = semantictimeline.timelineObjects
                 .Where(timelineObject => timelineObject.placeVisit != null)
-                .Select(timelineObject => new DbPlaceVisit(timelineObject.placeVisit));
+                .Select(timelineObject => new DbPlaceVisit(timelineObject.placeVisit))
+                .ToList();
 
             var newActivitySegments = semantictimeline.timelineObjects
                 .Where(timelineObject => timelineObject.activitySegment != null)
-                .Select(timelineObject => new DbActivitySegment(timelineObject.activitySegment));
+                .Select(timelineObject => new DbActivitySegment(timelineObject.activitySegment))
+                .ToList();
 
             var timelineDataUser = _applicationDbContext.Users
                 .Where(dbUser => user.Id == dbUser.Id)
@@ -97,7 +102,7 @@ namespace Domain
                     }).ToList();
                     oldPlaceVisits.Add(visit);
                     return visit;
-                });
+                }).ToList();
 
             // Filter out existing activity segments
             newActivitySegments = newActivitySegments
@@ -120,25 +125,32 @@ namespace Domain
                     }).ToList();
                     oldActivitySegments.Add(segment);
                     return segment;
-                });
+                }).ToList();
 
             timelineData.ActivitySegments.AddRange(newActivitySegments);
             timelineData.PlaceVisits.AddRange(newPlaceVisits);
+
+            if (newActivitySegments.Count > 0 || newPlaceVisits.Count > 0)
+            {
+                _memoryCache.Remove(CacheKey(user, "TimelineData"));
+            }
 
             _applicationDbContext.Update(user);
             _applicationDbContext.SaveChanges();
         }
 
+        private string CacheKey(User user, string key) => $"TimelineService|User::{user.Id}|Key::{key}";
+
         public TimelineData GetTimelineData(User user, RetrievalMethod method = RetrievalMethod.Id)
         {
-            switch (method)
+            var cacheKey = CacheKey(user, "TimelineData");
+            if (!_memoryCache.TryGetValue(cacheKey, out TimelineData timelineData))
             {
-                case RetrievalMethod.Id: return LoadTimelineDataByIdAggregation(user);
-                case RetrievalMethod.Include: return LoadTimelineDataByInclude(user);
-                case RetrievalMethod.Load: return LoadTimelineDataByExplicitLoad(user);
-                case RetrievalMethod.Predicate: return LoadTimelineDataByPredicateAggregation(user);
+                var options = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(300));
+                timelineData = GetTimelineDataInternal(user, method);
+                _memoryCache.Set(cacheKey, timelineData, options);
             }
-            throw new InvalidEnumArgumentException($"Method does not support provided Enum {method}");
+            return timelineData;
         }
 
         public long BenchmarkGetTimelineData(User user, RetrievalMethod method = RetrievalMethod.Id)
@@ -221,6 +233,11 @@ namespace Domain
                 .Single()
                 .TimelineData;
 
+            if (data == null)
+            {
+                return null;
+            }
+
             // Direct ids
             var waypointIds = new HashSet<int?>();
             var locationVisitIds = new HashSet<int?>();
@@ -291,6 +308,11 @@ namespace Domain
         /// </summary>
         private List<T> LoadFromPredicates<T>(DbSet<T> dbSet, IEnumerable<Expression<Func<T, bool>>> predicateExpressions) where T : class
         {
+            var expressions = predicateExpressions.ToList();
+            if(expressions.Count > 100)
+            {
+                throw new InvalidOperationException("Too many predicates will actually lead to a stack overflow, so dont do that..");
+            }
             var queryable = dbSet.AsQueryable();
             foreach (var expression in predicateExpressions)
             {

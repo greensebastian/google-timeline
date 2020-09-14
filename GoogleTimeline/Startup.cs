@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Domain.Interface;
 using GoogleTimelineUI.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GoogleTimeline
 {
@@ -24,6 +25,8 @@ namespace GoogleTimeline
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IMemoryCache, MemoryCache>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));

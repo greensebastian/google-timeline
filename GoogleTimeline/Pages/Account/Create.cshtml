@@ -8,6 +8,6 @@
 </h1>
 <p>You do not yet have an account for this email. Do you want to create one for @Model.Email?</p>
 <form method="post">
-    <input type="text" name="returnUrl" value="@Model.ReturnUrl" />
+    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
     <button type="submit">Create account</button>
 </form>

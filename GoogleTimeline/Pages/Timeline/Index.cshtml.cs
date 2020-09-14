@@ -2,6 +2,7 @@ using Domain.Interface;
 using GoogleTimelineUI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
 using System.Threading.Tasks;
 
 namespace GoogleTimeline.Pages.Timeline
@@ -18,11 +19,17 @@ namespace GoogleTimeline.Pages.Timeline
         }
         public int PlaceVisitCount { get; set; }
         public int ActivitySegmentCount { get; set; }
+        public string PeriodString { get; set; }
         public async Task OnGet()
         {
             var timelineData = _timelineService.GetTimelineData(await _userService.CurrentUser());
-            PlaceVisitCount = timelineData.PlaceVisits.Count;
-            ActivitySegmentCount = timelineData.ActivitySegments.Count;
+            PlaceVisitCount = timelineData?.PlaceVisits.Count ?? 0;
+            ActivitySegmentCount = timelineData?.ActivitySegments.Count ?? 0;
+        }
+
+        private string DateRangeFormat(DateTime start, DateTime end)
+        {
+            throw new NotImplementedException();
         }
     }
 }
