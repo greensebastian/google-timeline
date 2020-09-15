@@ -24,8 +24,8 @@ namespace Model.Timeline.Data
         [MaxLength(50)]
         [Column(TypeName = "nvarchar(50)")]
         public string Confidence { get; set; }
-        public int CenterLatE7 { get; set; }
-        public int CenterLngE7 { get; set; }
+        public long CenterLatE7 { get; set; }
+        public long CenterLngE7 { get; set; }
 
         [ForeignKey("DbPlaceVisitId")]
         public virtual List<DbPlaceVisit> ChildVisits { get; set; }

@@ -162,6 +162,12 @@ namespace Domain
 
         private TimelineData GetTimelineDataInternal(User user, RetrievalMethod method)
         {
+#if !DEBUG
+            if (method != RetrievalMethod.Id)
+            {
+                throw new InvalidEnumArgumentException($"Only retrieval by id can be used in a non-debug environment");
+            }
+#endif
             switch (method)
             {
                 case RetrievalMethod.Id: return LoadTimelineDataByIdAggregation(user);

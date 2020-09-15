@@ -30,8 +30,8 @@ namespace Model.Timeline.Data
 
         [Key]
         public int Id { get; set; }
-        public int LatitudeE7 { get; set; }
-        public int LongitudeE7 { get; set; }
+        public long LatitudeE7 { get; set; }
+        public long LongitudeE7 { get; set; }
 
         [MaxLength(200)]
         [Column(TypeName = "nvarchar(200)")]

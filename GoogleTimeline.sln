@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{0FA549FB-6037-4E86-B107-41D7153AB965}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{B2E86B63-9EC3-4882-8649-A1208875B798}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{B2E86B63-9EC3-4882-8649-A1208875B798}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

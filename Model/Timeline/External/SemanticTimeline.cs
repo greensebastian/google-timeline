@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common;
+using System.Collections.Generic;
 
 namespace Model.Timeline.External
 {
@@ -40,8 +41,10 @@ namespace Model.Timeline.External
 
     public class Waypoint
     {
-        public int latE7 { get; set; }
-        public int lngE7 { get; set; }
+        private long _latE7;
+        private long _lngE7;
+        public long latE7 { get => ImportFix.FixLatitude(_latE7) ; set => _latE7 = value; }
+        public long lngE7 { get => ImportFix.FixLongitude(_lngE7); set => _lngE7 = value; }
     }
 
     public class Simplifiedrawpath
@@ -51,8 +54,10 @@ namespace Model.Timeline.External
 
     public class Point
     {
-        public int latE7 { get; set; }
-        public int lngE7 { get; set; }
+        private long _latE7;
+        private long _lngE7;
+        public long latE7 { get => ImportFix.FixLatitude(_latE7); set => _latE7 = value; }
+        public long lngE7 { get => ImportFix.FixLongitude(_lngE7); set => _lngE7 = value; }
         public string timestampMs { get; set; }
         public int accuracyMeters { get; set; }
     }
@@ -66,8 +71,10 @@ namespace Model.Timeline.External
 
     public class Transitstop
     {
-        public int latitudeE7 { get; set; }
-        public int longitudeE7 { get; set; }
+        private long _latE7;
+        private long _lngE7;
+        public long latitudeE7 { get => ImportFix.FixLatitude(_latE7); set => _latE7 = value; }
+        public long longitudeE7 { get => ImportFix.FixLongitude(_lngE7); set => _lngE7 = value; }
         public string placeId { get; set; }
         public string name { get; set; }
     }
@@ -83,15 +90,17 @@ namespace Model.Timeline.External
         public Location location { get; set; }
         public Duration duration { get; set; }
         public string placeConfidence { get; set; }
-        public int centerLatE7 { get; set; }
-        public int centerLngE7 { get; set; }
+        public long centerLatE7 { get; set; }
+        public long centerLngE7 { get; set; }
         public Childvisit[] childVisits { get; set; }
     }
 
     public class Location
     {
-        public int latitudeE7 { get; set; }
-        public int longitudeE7 { get; set; }
+        private long _latE7;
+        private long _lngE7;
+        public long latitudeE7 { get => ImportFix.FixLatitude(_latE7); set => _latE7 = value; }
+        public long longitudeE7 { get => ImportFix.FixLongitude(_lngE7); set => _lngE7 = value; }
         public string placeId { get; set; }
         public string address { get; set; }
         public string name { get; set; }
@@ -106,10 +115,12 @@ namespace Model.Timeline.External
 
     public class Childvisit
     {
+        private long _latE7;
+        private long _lngE7;
+        public long centerLatE7 { get => ImportFix.FixLatitude(_latE7); set => _latE7 = value; }
+        public long centerLngE7 { get => ImportFix.FixLongitude(_lngE7); set => _lngE7 = value; }
         public Location location { get; set; }
         public Duration duration { get; set; }
         public string placeConfidence { get; set; }
-        public int centerLatE7 { get; set; }
-        public int centerLngE7 { get; set; }
     }
 }
