@@ -1,6 +1,5 @@
 using Common;
 using Domain.Interface;
-using GoogleTimelineUI.Logic;
 using GoogleTimelineUI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -28,9 +27,28 @@ namespace GoogleTimeline.Pages.Timeline
         public int? VisitCount { get; set; }
         public List<DateTime> VisitDays { get; set; }
         public string MapsLink { get; set; }
+        public string LocationRadius { get; set; }
         public async Task OnGet()
         {
             var timelineData = _timelineService.GetTimelineData(await _userService.CurrentUser());
+            if (timelineData == null)
+            {
+                return;
+            }
+
+            var startDate = DateTime.MinValue;
+            var endDate = DateTime.MaxValue;
+            if (DateTime.TryParse(Request.Query["start"], out var queryStart))
+            {
+                startDate = queryStart;
+            }
+            if (DateTime.TryParse(Request.Query["end"], out var queryEnd))
+            {
+                endDate = queryEnd;
+            }
+
+            timelineData = timelineData?.ForPeriod(startDate, endDate);
+
             PlaceVisitCount = timelineData?.PlaceVisits.Count ?? 0;
             ActivitySegmentCount = timelineData?.ActivitySegments.Count ?? 0;
 
@@ -40,18 +58,14 @@ namespace GoogleTimeline.Pages.Timeline
                 var lng = double.Parse(Request.Query["lng"], CultureInfo.InvariantCulture);
                 var r = int.Parse(Request.Query["r"], CultureInfo.InvariantCulture);
 
-                var daysVisited = TimelineLogic.GetNumberOfDaysVisited(timelineData?.PlaceVisits, lat, lng, r)
+                var daysVisited = timelineData.DaysVisited(lat, lng, r)
                     .OrderBy(date => date.Date)
                     .ToList();
                 VisitCount = daysVisited.Count;
                 VisitDays = VisitCount == 0 ? null : daysVisited;
                 MapsLink = GoogleUtil.MapsLink(lat, lng, 10);
+                LocationRadius = string.Format("{0} km", (r / 1000.0).ToString("N", CultureInfo.InvariantCulture));
             }
-        }
-
-        private string DateRangeFormat(DateTime start, DateTime end)
-        {
-            throw new NotImplementedException();
         }
     }
 }

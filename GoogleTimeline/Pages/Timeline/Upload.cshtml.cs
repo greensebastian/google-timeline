@@ -16,6 +16,8 @@ namespace GoogleTimeline.Pages.Timeline
         private readonly ITimelineService _timelineService;
         private readonly UserService _userService;
 
+        public bool UploadCompleted { get; set; }
+
         public UploadModel(ITimelineService timelineService, UserService userService)
         {
             _timelineService = timelineService;
@@ -42,6 +44,7 @@ namespace GoogleTimeline.Pages.Timeline
                 });
 
                 _timelineService.AddTimelineData(await _userService.CurrentUser(), timelines);
+                UploadCompleted = true;
             }
         }
     }

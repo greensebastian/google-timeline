@@ -3,15 +3,78 @@
 @{
 }
 <h1 class="display-4">Timeline</h1>
-<p>Here you can view your timeline summary, and add more records.</p>
-@if (!string.IsNullOrWhiteSpace(Model.PeriodString)) 
+<p>Here you can view your timeline summary, <a href=@Url.PageLink("/Timeline/Upload")>add more records</a>, or <a href="@Url.PageLink("/Timeline/Benchmark")">run benchmarks</a> (if running debug build).</p>
+<p>
+    Query this page with the following get parameters (collapsed):
+    <h3 class="mt-4" data-toggle="collapse" href="#collapseLocation" role="button" aria-expanded="false" aria-controls="collapseLocation">Filter by location</h3>
+    <div class="collapse" id="collapseLocation">
+        <table class="table">
+            <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>lat</td>
+                <td>decimal</td>
+                <td>latitude</td>
+            </tr>
+            <tr>
+                <td>lng</td>
+                <td>decimal</td>
+                <td>longitude</td>
+            </tr>
+            <tr>
+                <td>r</td>
+                <td>int</td>
+                <td>radius in meters</td>
+            </tr>
+        </table>
+        Ex: <a href="?lat=55.678644&lng=12.576566&r=10000">lat=55.678644&lng=12.576566&r=10000</a>, 10 km from Copenhagen Indre By.
+    </div>
+
+    <h3 class="mt-4" data-toggle="collapse" href="#collapsePeriod" role="button" aria-expanded="false" aria-controls="collapsePeriod">Filter by period</h3>
+    <div class="collapse" id="collapsePeriod">
+        <table class="table">
+            <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>start</td>
+                <td>Date</td>
+                <td>Inclusive start date</td>
+            </tr>
+            <tr>
+                <td>end</td>
+                <td>Date</td>
+                <td>Inclusive end date</td>
+            </tr>
+        </table>
+        Ex: <a href="?start=2019-01-01&end=2019-12-31">?start=2019-01-01&end=2019-12-31</a>, all events from 2019.
+    </div>
+</p>
+@if (!string.IsNullOrWhiteSpace(Model.PeriodString))
 {
     <p>The data available is for the following periods: @Model.PeriodString</p>
 }
+<h2 class="mt-4">Total count</h2>
+<table>
+    <tr>
+        <td>Place visits:</td>
+        <td>@Model.PlaceVisitCount</td>
+    </tr>
+    <tr>
+        <td>Activity segments:</td>
+        <td>@Model.ActivitySegmentCount</td>
+    </tr>
+</table>
 @if (Model.VisitCount.HasValue)
 {
+    <h2 class="mt-4">Location specific</h2>
     <p>
-        Number of days visiting selected location: @Model.VisitCount
+        Number of days with visits within @Model.LocationRadius of selected location: @Model.VisitCount
         <br />
         <a href="@Model.MapsLink" target="_blank">Open location in maps</a>
     </p>
@@ -25,13 +88,3 @@
         </ul>
     }
 }
-<table>
-    <tr>
-        <td>Place visits:</td>
-        <td>@Model.PlaceVisitCount</td>
-    </tr>
-    <tr>
-        <td>Activity segments:</td>
-        <td>@Model.ActivitySegmentCount</td>
-    </tr>
-</table>
