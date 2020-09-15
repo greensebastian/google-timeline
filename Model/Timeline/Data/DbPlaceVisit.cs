@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using Model.Timeline.External;
+using Common;
 
 namespace Model.Timeline.Data
 {
@@ -26,6 +27,8 @@ namespace Model.Timeline.Data
         public string Confidence { get; set; }
         public long CenterLatE7 { get; set; }
         public long CenterLngE7 { get; set; }
+        public double CenterLat { get => CoordinateUtil.ToDegrees(CenterLatE7); }
+        public double CenterLng { get => CoordinateUtil.ToDegrees(CenterLngE7); }
 
         [ForeignKey("DbPlaceVisitId")]
         public virtual List<DbPlaceVisit> ChildVisits { get; set; }

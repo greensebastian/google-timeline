@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Common;
 using Model.Timeline.External;
 
 namespace Model.Timeline.Data
@@ -10,6 +10,8 @@ namespace Model.Timeline.Data
         public int Id { get; set; }
         public long LatitudeE7 { get; set; }
         public long LongitudeE7 { get; set; }
+        public double Latitude { get => CoordinateUtil.ToDegrees(LatitudeE7); }
+        public double Longitude { get => CoordinateUtil.ToDegrees(LongitudeE7); }
         public int? DbActivitySegmentId { get; set; }
 
         public DbWaypoint()

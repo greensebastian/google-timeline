@@ -6,7 +6,6 @@ using Model.Timeline.External;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GoogleTimelineUI.Logic
 {
@@ -32,14 +31,17 @@ namespace GoogleTimelineUI.Logic
             return data;
         }
 
-        public int GetNumberOfDaysVisited(TimelineData data, int centerLatitude, int centerLongitude, int meterRadius)
+        public static HashSet<DateTime> GetNumberOfDaysVisited(List<DbPlaceVisit> placeVisits, double centerLatitude, double centerLongitude, int meterRadius)
         {
-            throw new NotImplementedException();
             var daysVisited = new HashSet<DateTime>();
-            foreach(var visit in data.PlaceVisits)
+            foreach(var visit in placeVisits)
             {
-                //if (Math.Pow(centerLatitude - visit.CenterLatE7))
+                if (CoordinateUtil.SurfaceDistance(centerLatitude, centerLongitude, visit.CenterLat, visit.CenterLng) < meterRadius)
+                {
+                    daysVisited.UnionWith(DateUtil.DaysBetween(visit.StartDateTime, visit.EndDateTime));
+                }
             }
+            return daysVisited;
         }
     }
 }

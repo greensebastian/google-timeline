@@ -8,6 +8,23 @@
 {
     <p>The data available is for the following periods: @Model.PeriodString</p>
 }
+@if (Model.VisitCount.HasValue)
+{
+    <p>
+        Number of days visiting selected location: @Model.VisitCount
+        <br />
+        <a href="@Model.MapsLink" target="_blank">Open location in maps</a>
+    </p>
+    @if (Model.VisitDays != null)
+    {
+        <ul>
+            @foreach (var day in Model.VisitDays)
+            {
+                <li>@day.ToString("yyyy-MM-dd, dddd")</li>
+            }
+        </ul>
+    }
+}
 <table>
     <tr>
         <td>Place visits:</td>
