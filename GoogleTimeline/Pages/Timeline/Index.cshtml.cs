@@ -1,8 +1,11 @@
 using Common;
 using Domain.Interface;
+using GoogleTimelineUI.Models;
 using GoogleTimelineUI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,6 +31,7 @@ namespace GoogleTimeline.Pages.Timeline
         public List<DateTime> VisitDays { get; set; }
         public string MapsLink { get; set; }
         public string LocationRadius { get; set; }
+        public List<CollapsibleAsync> AsyncSections { get; set; } = new List<CollapsibleAsync>();
         public async Task OnGet()
         {
             var timelineData = _timelineService.GetTimelineData(await _userService.CurrentUser());
@@ -66,6 +70,13 @@ namespace GoogleTimeline.Pages.Timeline
                 MapsLink = GoogleUtil.MapsLink(lat, lng, 10);
                 LocationRadius = string.Format("{0} km", (r / 1000.0).ToString("N", CultureInfo.InvariantCulture));
             }
+
+            AsyncSections.Add(new CollapsibleAsync
+            {
+                Endpoint = Url.Action("locationsByCount", "timeline"),
+                Id = "locationsByCount",
+                Title = "Locations by number of visits"
+            });
         }
     }
 }

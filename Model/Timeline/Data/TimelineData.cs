@@ -24,6 +24,17 @@ namespace Model.Timeline.Data
             };
         }
 
+        public Dictionary<DbLocation, int> LocationsByCount()
+        {
+            var locationCounts = new Dictionary<DbLocation, int>();
+            foreach(var location in PlaceVisits.Select(visit => visit.LocationVisit.Location))
+            {
+                if (!locationCounts.ContainsKey(location)) locationCounts[location] = 0;
+                locationCounts[location]++;
+            }
+            return locationCounts;
+        }
+
         public HashSet<DateTime> DaysVisited(double centerLatitude, double centerLongitude, int meterRadius)
         {
             var daysVisited = new HashSet<DateTime>();

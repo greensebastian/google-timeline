@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model GoogleTimelineUI.Models.CollapsibleAsync
+@{
+}
+<h3 class="mt-4" data-toggle="collapse" href="#@Model.Id" role="button" aria-expanded="false" aria-controls="@Model.Id" id="@Model.Id-control">@Model.Title</h3>
+<div class="collapse" id="@Model.Id">
+</div>
+<script>
+    let root = document.getElementById("@Model.Id");
+    let control = document.getElementById("@Model.Id-control");
+    let endpoint = "@Model.Endpoint";
+    let called = false;
+    control.addEventListener("click", (e) => {
+        if (called) return;
+        called = true;
+        fetch(endpoint)
+            .then((response) => {
+                let status = parseInt(response.status);
+                return (status < 200 || status > 299) ? "Service failed. Error code: " + status : response.text();
+            })
+            .then((responseText) => root.innerHTML = responseText);
+    });
+</script>

@@ -88,3 +88,7 @@
         </ul>
     }
 }
+@foreach(var asyncSection in Model.AsyncSections)
+{
+    @await Html.PartialAsync("~/Views/CollapsibleAsync.cshtml", asyncSection);
+}
