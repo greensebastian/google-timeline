@@ -1,5 +1,4 @@
 using DataAccess;
-using Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Domain.Interface;
 using GoogleTimelineUI.Services;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -57,7 +55,7 @@ namespace GoogleTimeline
                 options.CallbackPath = googleConfigurationSection["CallbackPath"];
             });
 
-            services.AddTransient<ITimelineService, TimelineService>();
+            services.AddTransient<TimelineRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

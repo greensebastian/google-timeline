@@ -1,11 +1,10 @@
 using Common;
-using Domain.Interface;
+using DataAccess;
 using GoogleTimelineUI.Models;
 using GoogleTimelineUI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,11 +16,11 @@ namespace GoogleTimeline.Pages.Timeline
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly ITimelineService _timelineService;
+        private readonly TimelineRepository _timelineRepository;
         private readonly UserService _userService;
-        public IndexModel(ITimelineService timelineService, UserService userService)
+        public IndexModel(TimelineRepository timelineRepository, UserService userService)
         {
-            _timelineService = timelineService;
+            _timelineRepository = timelineRepository;
             _userService = userService;
         }
         public int PlaceVisitCount { get; set; }
@@ -34,7 +33,7 @@ namespace GoogleTimeline.Pages.Timeline
         public List<CollapsibleAsync> AsyncSections { get; set; } = new List<CollapsibleAsync>();
         public async Task OnGet()
         {
-            var timelineData = _timelineService.GetTimelineData(await _userService.CurrentUser());
+            var timelineData = _timelineRepository.GetTimelineData(await _userService.CurrentUser());
             if (timelineData == null)
             {
                 return;
@@ -76,6 +75,20 @@ namespace GoogleTimeline.Pages.Timeline
                 Endpoint = Url.Action("locationsByCount", "timeline"),
                 Id = "locationsByCount",
                 Title = "Locations by number of visits"
+            });
+
+            AsyncSections.Add(new CollapsibleAsync
+            {
+                Endpoint = Url.Action("travelMethodsByCount", "timeline"),
+                Id = "travelMethodsByCount",
+                Title = "Travel methods by count"
+            });
+
+            AsyncSections.Add(new CollapsibleAsync
+            {
+                Endpoint = Url.Action("travelMethodsByDistance", "timeline"),
+                Id = "travelMethodsByDistance",
+                Title = "Travel methods by distance"
             });
         }
     }

@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using Model.Timeline.External;
-using Domain.Interface;
 using GoogleTimelineUI.Services;
+using DataAccess;
 
 namespace GoogleTimeline.Pages.Timeline
 {
     [Authorize]
     public class UploadModel : PageModel
     {
-        private readonly ITimelineService _timelineService;
+        private readonly TimelineRepository _timelineRepository;
         private readonly UserService _userService;
 
         public bool UploadCompleted { get; set; }
 
-        public UploadModel(ITimelineService timelineService, UserService userService)
+        public UploadModel(TimelineRepository timelineRepository, UserService userService)
         {
-            _timelineService = timelineService;
+            _timelineRepository = timelineRepository;
             _userService = userService;
         }
 
@@ -43,7 +43,7 @@ namespace GoogleTimeline.Pages.Timeline
                     }
                 });
 
-                _timelineService.AddTimelineData(await _userService.CurrentUser(), timelines);
+                _timelineRepository.AddTimelineData(await _userService.CurrentUser(), timelines);
                 UploadCompleted = true;
             }
         }

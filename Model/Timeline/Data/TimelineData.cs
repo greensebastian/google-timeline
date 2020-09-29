@@ -47,5 +47,37 @@ namespace Model.Timeline.Data
             }
             return daysVisited;
         }
+
+        public Dictionary<string, double> TravelMethodsByDistance()
+        {
+            var types = new Dictionary<string, double>();
+
+            foreach(var activitySegment in ActivitySegments)
+            {
+                var type = activitySegment.ActivityType?.ToUpperInvariant();
+                if (string.IsNullOrWhiteSpace(type) || activitySegment.Distance <= 0) continue;
+
+                if (!types.ContainsKey(type)) types[type] = 0;
+                types[type] += activitySegment.Distance;
+            }
+
+            return types;
+        }
+
+        public Dictionary<string, double> TravelMethodsByCount()
+        {
+            var types = new Dictionary<string, double>();
+
+            foreach (var activitySegment in ActivitySegments)
+            {
+                var type = activitySegment.ActivityType?.ToUpperInvariant();
+                if (string.IsNullOrWhiteSpace(type)) continue;
+
+                if (!types.ContainsKey(type)) types[type] = 0;
+                types[type]++;
+            }
+
+            return types;
+        }
     }
 }

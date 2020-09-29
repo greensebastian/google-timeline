@@ -1,10 +1,8 @@
-﻿using DataAccess;
-using Model.Timeline.Data;
+﻿using Model.Timeline.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Model.Timeline.External;
-using Domain.Interface;
 using System;
 using System.Linq.Expressions;
 using System.Diagnostics;
@@ -12,14 +10,14 @@ using Common;
 using System.ComponentModel;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Domain
+namespace DataAccess
 {
-    public class TimelineService : ITimelineService
+    public class TimelineRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IMemoryCache _memoryCache;
 
-        public TimelineService(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache)
+        public TimelineRepository(ApplicationDbContext applicationDbContext, IMemoryCache memoryCache)
         {
             _applicationDbContext = applicationDbContext;
             _memoryCache = memoryCache;
