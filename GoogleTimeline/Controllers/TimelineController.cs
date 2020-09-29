@@ -22,6 +22,8 @@ namespace GoogleTimelineUI.Controllers
             _timelineRepository = timelineRepository;
         }
 
+        // TODO make Application service to move data building logic out of controller
+
         public async Task<IActionResult> LocationsByCount()
         {
             var user = await _userService.CurrentUser();
