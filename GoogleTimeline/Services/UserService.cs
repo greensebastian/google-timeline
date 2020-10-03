@@ -22,5 +22,11 @@ namespace GoogleTimelineUI.Services
             }
             return null;
         }
+
+        public async Task RemoveUser(User user)
+        {
+            await _signInManager.SignOutAsync();
+            await _userManager.DeleteAsync(user);
+        }
     }
 }

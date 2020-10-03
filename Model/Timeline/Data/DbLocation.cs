@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common;
 using Model.Timeline.External;
@@ -48,6 +49,8 @@ namespace Model.Timeline.Data
         [MaxLength(100)]
         [Column(TypeName = "nvarchar(100)")]
         public string PlaceId { get; set; }
+
+        public List<DbLocationVisit> LocationVisits { get; set; }
 
         public override bool Equals(object obj)
         {

@@ -23,6 +23,54 @@ namespace DataAccess
             _memoryCache = memoryCache;
         }
 
+        public void RemoveTimelineData(User user)
+        {
+            if (user == null) return;
+            var timelineData = GetTimelineData(user);
+            if (timelineData == null) return;
+
+            var affectedLocations = new HashSet<DbLocation>();
+            var removedLocationVisits = new HashSet<DbLocationVisit>();
+
+            foreach(var activitySegment in timelineData.ActivitySegments)
+            {
+                foreach(var locationVisit in activitySegment.TransitLocationVisits ?? new List<DbLocationVisit>())
+                {
+                    affectedLocations.Add(locationVisit.Location);
+                    removedLocationVisits.Add(locationVisit);
+                    _applicationDbContext.LocationVisits.Remove(locationVisit);
+                }
+                _applicationDbContext.Waypoints.RemoveRange(activitySegment.Waypoints ?? new List<DbWaypoint>());
+                _applicationDbContext.Waypoints.Remove(activitySegment.StartWaypoint);
+                _applicationDbContext.Waypoints.Remove(activitySegment.EndWaypoint);
+            }
+            _applicationDbContext.ActivitySegments.RemoveRange(timelineData.ActivitySegments);
+
+            foreach(var placeVisit in timelineData.PlaceVisits)
+            {
+                affectedLocations.Add(placeVisit.LocationVisit.Location);
+                removedLocationVisits.Add(placeVisit.LocationVisit);
+                _applicationDbContext.LocationVisits.Remove(placeVisit.LocationVisit);
+                foreach(var childVisit in placeVisit.ChildVisits ?? new List<DbPlaceVisit>())
+                {
+                    affectedLocations.Add(childVisit.LocationVisit.Location);
+                    removedLocationVisits.Add(childVisit.LocationVisit);
+                    _applicationDbContext.LocationVisits.Remove(childVisit.LocationVisit);
+                    _applicationDbContext.PlaceVisits.Remove(childVisit);
+                }
+            }
+            _applicationDbContext.PlaceVisits.RemoveRange(timelineData.PlaceVisits);
+
+            // Remove any not-referenced locations remaining
+            var affectedLocationIds = affectedLocations.Select(location => location.Id);
+            var visitsReferencingAffectedLocation = _applicationDbContext.LocationVisits.Where(visit => affectedLocationIds.Contains(visit.Location.Id)).ToList();
+            var locationsToRemove = affectedLocations.Where(location => removedLocationVisits.Count(visit => visit.LocationId == location.Id) >= visitsReferencingAffectedLocation.Count(visit => visit.LocationId == location.Id));
+            _applicationDbContext.Locations.RemoveRange(locationsToRemove);
+
+            _applicationDbContext.TimelineData.Remove(timelineData);
+            _applicationDbContext.SaveChanges();
+        }
+
         public void AddTimelineData(User user, IEnumerable<SemanticTimeline> semantictimelines)
         {
             var semantictimeline = new SemanticTimeline
@@ -43,14 +91,15 @@ namespace DataAccess
             var timelineDataUser = _applicationDbContext.Users
                 .Where(dbUser => user.Id == dbUser.Id)
                 .Include(dbUser => dbUser.TimelineData)
-                .ThenInclude(timelineData => timelineData.ActivitySegments)
-                .Include(dbUser => dbUser.TimelineData)
-                .ThenInclude(timelineData => timelineData.PlaceVisits)
                 .Single();
 
             if (user.TimelineData == null)
             {
                 user.TimelineData = new TimelineData();
+            }
+            else
+            {
+                GetTimelineData(user);
             }
             var timelineData = user.TimelineData;
 
