@@ -17,6 +17,7 @@ namespace GoogleTimeline.Pages.Account
         private readonly IConfiguration _configuration;
         public string Email { get; set; }
         public string ReturnUrl { get; set; }
+        public bool RequireRegistrationKey { get; set; }
 
         public CreateModel(SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
         {
@@ -24,7 +25,9 @@ namespace GoogleTimeline.Pages.Account
             _userManager = userManager;
             _configuration = configuration;
         }
-        
+
+        private string RegistrationSecret => _configuration.GetValue<string>("RegistrationKey");
+
         public async Task<IActionResult> OnGet(string returnUrl = null)
         {
             var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
@@ -38,6 +41,7 @@ namespace GoogleTimeline.Pages.Account
             }
             Email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
             ReturnUrl = returnUrl;
+            RequireRegistrationKey = !string.IsNullOrEmpty(RegistrationSecret);
             return Page();
         }
 
@@ -50,8 +54,7 @@ namespace GoogleTimeline.Pages.Account
                 throw new ApplicationException("Attempted to create user without external email info provided");
             }
 
-            var registrationSecret = _configuration.GetValue<string>("RegistrationKey");
-            if (registrationKey != registrationSecret)
+            if (!string.IsNullOrEmpty(RegistrationSecret) && registrationKey != RegistrationSecret)
             {
                 return BadRequest("The registration key is not valid");
             }
