@@ -269,3 +269,4 @@ __pycache__/
 
 appsettings.json
 appsettings.*.json
+*.arm.json
