@@ -25,6 +25,8 @@ namespace GoogleTimeline
         {
             services.AddSingleton<IMemoryCache, MemoryCache>();
 
+            services.AddSingleton(Configuration);
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));

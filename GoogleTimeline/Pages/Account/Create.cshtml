@@ -9,5 +9,7 @@
 <p>You do not yet have an account for this email. Do you want to create one for @Model.Email?</p>
 <form method="post">
     <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+    <label for="registrationKey">Registration key</label>
+    <input type="text" required name="registrationKey" value="" />
     <button type="submit">Create account</button>
 </form>

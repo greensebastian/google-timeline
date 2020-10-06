@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DataAccess;
+using Microsoft.Extensions.Configuration;
 
 namespace GoogleTimeline.Pages.Account
 {
@@ -13,13 +14,15 @@ namespace GoogleTimeline.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration;
         public string Email { get; set; }
         public string ReturnUrl { get; set; }
 
-        public CreateModel(SignInManager<User> signInManager, UserManager<User> userManager)
+        public CreateModel(SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _configuration = configuration;
         }
         
         public async Task<IActionResult> OnGet(string returnUrl = null)
@@ -38,13 +41,19 @@ namespace GoogleTimeline.Pages.Account
             return Page();
         }
 
-        public async Task<IActionResult> OnPost(string returnUrl = null)
+        public async Task<IActionResult> OnPost(string returnUrl = null, string registrationKey = null)
         {
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null || !info.Principal.HasClaim(claim => claim.Type == ClaimTypes.Email))
             {
                 throw new ApplicationException("Attempted to create user without external email info provided");
+            }
+
+            var registrationSecret = _configuration.GetValue<string>("RegistrationKey");
+            if (registrationKey != registrationSecret)
+            {
+                return BadRequest("The registration key is not valid");
             }
 
             Email = info.Principal.FindFirstValue(ClaimTypes.Email);
