@@ -49,8 +49,8 @@ namespace Model.Timeline.Data
 
         public DbActivitySegment(Activitysegment activitysegment)
         {
-            StartDateTime = Constants.epoch.AddSeconds(activitysegment.duration.startTimestampMs / 1000).AddMilliseconds(activitysegment.duration.startTimestampMs % 1000);
-            EndDateTime = Constants.epoch.AddSeconds(activitysegment.duration.endTimestampMs / 1000).AddMilliseconds(activitysegment.duration.endTimestampMs % 1000);
+            StartDateTime = activitysegment.duration.startTimestamp;
+            EndDateTime = activitysegment.duration.endTimestamp;
             ActivityType = activitysegment.activityType;
             Confidence = activitysegment.confidence;
             Distance = activitysegment.distance;

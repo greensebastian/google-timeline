@@ -41,19 +41,19 @@ namespace Model.Timeline.Data
 
         public DbPlaceVisit(Placevisit visit)
         {
-            StartDateTime = Constants.epoch.AddSeconds(visit.duration.startTimestampMs / 1000).AddMilliseconds(visit.duration.startTimestampMs % 1000);
-            EndDateTime = Constants.epoch.AddSeconds(visit.duration.endTimestampMs / 1000).AddMilliseconds(visit.duration.endTimestampMs % 1000);
+            StartDateTime = visit.duration.startTimestamp;
+            EndDateTime = visit.duration.endTimestamp;
             CenterLatE7 = visit.centerLatE7;
             CenterLngE7 = visit.centerLngE7;
             Confidence = visit.placeConfidence;
             LocationVisit = new DbLocationVisit(visit.location);
-            ChildVisits = visit.childVisits?.Select(childVisit => new DbPlaceVisit(childVisit, visit.duration.startTimestampMs, visit.duration.endTimestampMs)).ToList() ?? new List<DbPlaceVisit>();
+            ChildVisits = visit.childVisits?.Select(childVisit => new DbPlaceVisit(childVisit, visit.duration.startTimestamp, visit.duration.endTimestamp)).ToList() ?? new List<DbPlaceVisit>();
         }
 
-        public DbPlaceVisit(Childvisit visit, long startTimestampMs, long endTimestampMs)
+        public DbPlaceVisit(Childvisit visit, DateTime startTimestamp, DateTime endTimestamp)
         {
-            StartDateTime = Constants.epoch.AddSeconds(startTimestampMs / 1000).AddMilliseconds(startTimestampMs % 1000);
-            EndDateTime = Constants.epoch.AddSeconds(endTimestampMs / 1000).AddMilliseconds(endTimestampMs % 1000);
+            StartDateTime = startTimestamp;
+            EndDateTime = endTimestamp;
             CenterLatE7 = visit.centerLatE7;
             CenterLngE7 = visit.centerLngE7;
             Confidence = visit.placeConfidence;

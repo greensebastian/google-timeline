@@ -1,4 +1,5 @@
 ﻿using Common;
+using System;
 using System.Collections.Generic;
 
 namespace Model.Timeline.External
@@ -30,8 +31,8 @@ namespace Model.Timeline.External
 
     public class Duration
     {
-        public long startTimestampMs { get; set; }
-        public long endTimestampMs { get; set; }
+        public DateTime startTimestamp { get; set; }
+        public DateTime endTimestamp { get; set; }
     }
 
     public class Waypointpath
@@ -58,7 +59,7 @@ namespace Model.Timeline.External
         private long _lngE7;
         public long latE7 { get => CoordinateUtil.FixLatitude(_latE7); set => _latE7 = value; }
         public long lngE7 { get => CoordinateUtil.FixLongitude(_lngE7); set => _lngE7 = value; }
-        public string timestampMs { get; set; }
+        public DateTime timestamp { get; set; }
         public int accuracyMeters { get; set; }
     }
 
